@@ -1,6 +1,7 @@
 # Maintainer: Your Name <youremail@domain.com>
-pkgname=test-dotnet-makepkg-arch-git
+pkgname=test-dotnet-makepkg-arch
 pkgrel=1
+pkgver=r3.9474196
 arch=(x86_64)
 url=""
 license=('GPL')
@@ -25,6 +26,7 @@ _branch='develop'
 
 pkgver() {
 	cd "$srcdir/${pkgname%-git}"
+
 	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
@@ -48,10 +50,12 @@ build() {
 
 package() {
 	cd "$srcdir/${pkgname%-git}"
+msg "${_outdir}"
+    install -dm755 "${pkgdir}/usr/lib/tdma/bin"
 
-    cp -dr "${_outdir}/*" "${pkgdir}/usr/lib/test-dotnet-makepkg-arch/bin"
+    cp -dr "${_outdir}/" "${pkgdir}/usr/lib/tdma/bin"
 
-    install -Dm644 etc/test-dotnet-makepkg-arch.service "${pkgdir}/usr/lib/systemd/test-dotnet-makepkg-arch.service"
+    install -Dm644 etc/test-dotnet-makepkg-arch.service "${pkgdir}/usr/lib/systemd/system/test-dotnet-makepkg-arch.service"
     install -Dm644 etc/test-dotnet-makepkg-arch.sysusers "${pkgdir}/usr/lib/sysusers.d/test-dotnet-makepkg-arch.conf"
     install -Dm644 etc/test-dotnet-makepkg-arch.tmpfiles "${pkgdir}/usr/lib/tmpfiles.d/test-dotnet-makepkg-arch.conf"
 }
