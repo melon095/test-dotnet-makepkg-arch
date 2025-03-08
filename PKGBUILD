@@ -18,7 +18,7 @@ source=('git+https://github.com/melon095/test-dotnet-makepkg-arch')
 noextract=()
 sha256sums=('SKIP')
 
-_carch="x86"
+_carch="x64"
 _framework='net9.0'
 _runtime="linux-${_carch}"
 _output='_output'
@@ -26,12 +26,12 @@ _artifacts="${_output}/${_framework}/${_runtime}/publish"
 _branch='develop'
 
 pkgver() {
-	cd "$srcdir/${pkgname}"
+	cd "$srcdir/${pkgname%-git}"
 	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
 prepare() {
-	cd "$srcdir/${pkgname}"
+	cd "$srcdir/${pkgname%-git}"
 
     dotnet restore \
         --runtime "${_runtime}" \
@@ -39,7 +39,7 @@ prepare() {
 }
 
 build() {
-	cd "$srcdir/${pkgname}"
+	cd "$srcdir/${pkgname%-git}"
 
     dotnet build \
         --framework "${_framework}" \
@@ -48,7 +48,7 @@ build() {
 }
 
 package() {
-	cd "$srcdir/${pkgname}"
+	cd "$srcdir/${pkgname%-git}"
 
     cp -dr "${_artifacts}/*" "${pkgdir}/usr/lib/sonarr/bin"
 
@@ -56,3 +56,4 @@ package() {
     install -Dm644 etc/test-dotnet-makepkg-arch.sysusers "${pkgdir}/usr/lib/sysusers.d/test-dotnet-makepkg-arch.conf"
     install -Dm644 etc/test-dotnet-makepkg-arch.tmpfiles "${pkgdir}/usr/lib/tmpfiles.d/test-dotnet-makepkg-arch.conf"
 }
+
