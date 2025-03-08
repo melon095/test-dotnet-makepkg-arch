@@ -1,6 +1,5 @@
 # Maintainer: Your Name <youremail@domain.com>
 pkgname=test-dotnet-makepkg-arch-git
-pkgver=1
 pkgrel=1
 arch=(x86_64)
 url=""
@@ -21,8 +20,7 @@ sha256sums=('SKIP')
 _carch="x64"
 _framework='net9.0'
 _runtime="linux-${_carch}"
-_output='_output'
-_artifacts="${_output}/${_framework}/${_runtime}/publish"
+_outdir="${pkgver}/${_framework}/${_runtime}"
 _branch='develop'
 
 pkgver() {
@@ -44,13 +42,14 @@ build() {
     dotnet build \
         --framework "${_framework}" \
         --runtime "${_runtime}" \
-        --configuration Release
+        --configuration Release \
+        --output "${_outdir}"
 }
 
 package() {
 	cd "$srcdir/${pkgname%-git}"
 
-    cp -dr "${_artifacts}/*" "${pkgdir}/usr/lib/sonarr/bin"
+    cp -dr "${_outdir}/*" "${pkgdir}/usr/lib/test-dotnet-makepkg-arch/bin"
 
     install -Dm644 etc/test-dotnet-makepkg-arch.service "${pkgdir}/usr/lib/systemd/test-dotnet-makepkg-arch.service"
     install -Dm644 etc/test-dotnet-makepkg-arch.sysusers "${pkgdir}/usr/lib/sysusers.d/test-dotnet-makepkg-arch.conf"
